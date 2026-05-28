@@ -396,7 +396,7 @@ function AdminDashboardPage() {
   return (
     <main className="min-h-screen bg-slate-100">
       <div className="flex min-h-screen flex-col lg:flex-row">
-        <aside className="border-b border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-0 lg:h-screen lg:w-72 lg:border-b-0 lg:border-r">
+        <aside className="border-b border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-72 lg:flex-col lg:overflow-y-auto lg:border-b-0 lg:border-r">
           <div className="flex items-center justify-between gap-4 lg:block">
             <div>
               <button className="text-2xl font-extrabold text-slate-950" type="button">
@@ -444,7 +444,7 @@ function AdminDashboardPage() {
           </nav>
 
           <button
-            className="mt-6 hidden w-full rounded-2xl border border-rose-200 px-4 py-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-50 lg:block"
+            className="mt-6 hidden w-full rounded-2xl border border-rose-200 px-4 py-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-50 lg:mt-auto lg:block"
             onClick={handleLogout}
             type="button"
           >

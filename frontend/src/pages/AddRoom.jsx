@@ -39,7 +39,8 @@ export default function AddRoom() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
+    const nextValue = name === "ownerMobile" ? value.replace(/\D/g, "").slice(0, 10) : value;
+    setForm((current) => ({ ...current, [name]: nextValue }));
   };
 
   const handleImageChange = (e) => {
@@ -65,6 +66,11 @@ export default function AddRoom() {
       setLoading(true);
       setMessage("");
       setError("");
+
+      if (!/^\d{10}$/.test(form.ownerMobile.trim())) {
+        setError("Owner mobile number must be exactly 10 digits");
+        return;
+      }
 
       const fullLocation = [
         form.houseNo.trim(),
@@ -97,9 +103,9 @@ export default function AddRoom() {
   };
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="mx-auto w-full max-w-xl">
-        <h2 className="mb-6 text-center text-3xl font-bold">Add Room</h2>
+    <div className="min-h-screen bg-slate-50 px-4 pb-10 pt-32 sm:px-6">
+      <div className="mx-auto w-full max-w-xl rounded-2xl bg-white p-6 shadow-xl shadow-slate-900/10 ring-1 ring-slate-200">
+        <h2 className="mb-6 text-center text-3xl font-bold text-slate-950">Add Room</h2>
 
         {message ? (
           <p className="mb-4 rounded bg-green-100 p-3 text-center text-green-700">
@@ -117,7 +123,7 @@ export default function AddRoom() {
           <input
             name="state"
             placeholder="State"
-            className="rounded border p-3 text-lg"
+            className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-lg outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
             onChange={handleChange}
             required
             value={form.state}
@@ -126,7 +132,7 @@ export default function AddRoom() {
           <input
             name="city"
             placeholder="City"
-            className="rounded border p-3 text-lg"
+            className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-lg outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
             onChange={handleChange}
             required
             value={form.city}
@@ -135,7 +141,7 @@ export default function AddRoom() {
           <input
             name="houseNo"
             placeholder="Flat No / House No"
-            className="rounded border p-3 text-lg"
+            className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-lg outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
             onChange={handleChange}
             required
             value={form.houseNo}
@@ -144,7 +150,7 @@ export default function AddRoom() {
           <input
             name="location"
             placeholder="Location"
-            className="rounded border p-3 text-lg"
+            className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-lg outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
             onChange={handleChange}
             required
             value={form.location}
@@ -153,7 +159,7 @@ export default function AddRoom() {
           <input
             name="rent"
             placeholder="Rent"
-            className="rounded border p-3 text-lg"
+            className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-lg outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
             min="1"
             onChange={handleChange}
             required
@@ -166,17 +172,17 @@ export default function AddRoom() {
             <input
               type="file"
               accept="image/*"
-              className="rounded border p-2 text-lg"
+              className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-lg"
               onChange={handleImageChange}
             />
             {form.image && (
-              <img src={form.image} alt="Preview" className="mt-2 h-40 w-full object-cover rounded border" />
+              <img src={form.image} alt="Preview" className="mt-2 h-40 w-full rounded-xl border object-cover" />
             )}
           </div>
 
           <select
             name="roomType"
-            className="rounded border p-3 text-lg"
+            className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-lg outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
             onChange={handleChange}
             required
             value={form.roomType}
@@ -191,8 +197,9 @@ export default function AddRoom() {
 
           <input
             name="ownerMobile"
-            placeholder="Owner Mobile No"
-            className="rounded border p-3 text-lg"
+            placeholder="Owner 10-digit Mobile No"
+            className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-lg outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+            inputMode="numeric"
             maxLength="10"
             onChange={handleChange}
             pattern="[0-9]{10}"
@@ -201,7 +208,7 @@ export default function AddRoom() {
             value={form.ownerMobile}
           />
 
-          <button className="rounded bg-blue-600 p-3 text-lg text-white" disabled={loading} type="submit">
+          <button className="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 p-3 text-lg font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60" disabled={loading} type="submit">
             {loading ? "Adding..." : "Add Room"}
           </button>
         </form>

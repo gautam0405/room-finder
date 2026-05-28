@@ -70,7 +70,10 @@ function UserDashboardPage() {
 
   const handleFormChange = (event) => {
     const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
+    const nextValue = ['userMobile', 'ownerMobile'].includes(name)
+      ? value.replace(/\D/g, '').slice(0, 10)
+      : value;
+    setForm((current) => ({ ...current, [name]: nextValue }));
   };
 
   const handleSubmit = async (event) => {
@@ -80,6 +83,11 @@ function UserDashboardPage() {
       setSubmitLoading(true);
       setSubmitMessage('');
       setSubmitError('');
+
+      if (!/^\d{10}$/.test(form.userMobile.trim()) || !/^\d{10}$/.test(form.ownerMobile.trim())) {
+        setSubmitError('Mobile numbers must be exactly 10 digits');
+        return;
+      }
 
       const response = await api.post('/rooms', {
         title: form.title.trim(),
@@ -147,10 +155,14 @@ function UserDashboardPage() {
             <label className="field">
               <span>User Mobile</span>
               <input
+                inputMode="numeric"
+                maxLength={10}
                 name="userMobile"
                 onChange={handleFormChange}
                 placeholder="10-digit mobile number"
+                pattern="[0-9]{10}"
                 required
+                type="tel"
                 value={form.userMobile}
               />
             </label>
@@ -179,9 +191,13 @@ function UserDashboardPage() {
               <span>Owner Mobile</span>
               <input
                 disabled={isOwner}
+                inputMode="numeric"
+                maxLength={10}
                 name="ownerMobile"
                 onChange={handleFormChange}
+                pattern="[0-9]{10}"
                 required
+                type="tel"
                 value={form.ownerMobile}
               />
             </label>

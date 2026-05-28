@@ -24,7 +24,8 @@ export default function Register() {
   }, [navigate]);
 
   const updateField = (field, value) => {
-    setForm((current) => ({ ...current, [field]: value }));
+    const nextValue = field === "phone" ? value.replace(/\D/g, "").slice(0, 10) : value;
+    setForm((current) => ({ ...current, [field]: nextValue }));
   };
 
   const handleRegister = async (e) => {
@@ -33,6 +34,11 @@ export default function Register() {
     try {
       setLoading(true);
       setMsg("");
+
+      if (!/^\d{10}$/.test(form.phone.trim())) {
+        setMsg("Phone number must be exactly 10 digits");
+        return;
+      }
 
       const payload = {
         name: form.name.trim(),
@@ -154,9 +160,13 @@ export default function Register() {
                       Phone Number
                     </span>
                     <input
+                      type="tel"
+                      inputMode="numeric"
                       className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
-                      placeholder="Enter phone number"
+                      placeholder="Enter 10-digit phone number"
                       value={form.phone}
+                      maxLength={10}
+                      pattern="[0-9]{10}"
                       onChange={(e) => updateField("phone", e.target.value)}
                       required
                     />

@@ -25,11 +25,10 @@ export default function Login() {
       const { token, user } = res.data;
       const backendRole = user?.role?.toLowerCase();
 
-      // Map UI roles to acceptable backend roles
       const roleMapping = {
         ADMIN: ["admin"],
         EMPLOYEE: ["landlord", "employee"],
-        USER: ["student", "user"]
+        USER: ["student", "user"],
       };
 
       if (role && !roleMapping[role].includes(backendRole)) {
@@ -42,7 +41,7 @@ export default function Login() {
       navigate(getDefaultRoute(user));
     } catch (error) {
       if (!error.response) {
-        alert("Cannot connect to server. Is the backend running on port 5001? 🔌");
+        alert("Cannot connect to server. Is the backend running on port 5001?");
       } else {
         alert(error?.response?.data?.message || "Login failed");
       }
@@ -52,225 +51,170 @@ export default function Login() {
   };
 
   const roleConfig = {
-    USER: { name: "User", emoji: "👤", color: "#667eea" },
-    EMPLOYEE: { name: "Employee", emoji: "🏢", color: "#764ba2" },
-    ADMIN: { name: "Admin", emoji: "⚙️", color: "#d64545" },
+    USER: {
+      name: "User",
+      short: "U",
+      color: "border-indigo-200 bg-indigo-50 text-indigo-700 hover:border-indigo-400",
+      active: "from-indigo-600 to-violet-600",
+    },
+    EMPLOYEE: {
+      name: "Employee",
+      short: "E",
+      color: "border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-400",
+      active: "from-emerald-600 to-teal-600",
+    },
+    ADMIN: {
+      name: "Admin",
+      short: "A",
+      color: "border-rose-200 bg-rose-50 text-rose-700 hover:border-rose-400",
+      active: "from-rose-600 to-red-600",
+    },
   };
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "20px",
-    }}>
-      <div style={{
-        background: "var(--color-background-primary)",
-        borderRadius: "12px",
-        boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
-        width: "100%",
-        maxWidth: "420px",
-        padding: "2.5rem",
-      }}>
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-          <div style={{ fontSize: "48px", marginBottom: "1rem" }}>🏠</div>
-          <h1 style={{
-            fontSize: "28px",
-            fontWeight: "500",
-            margin: "0 0 0.5rem",
-            color: "var(--color-text-primary)",
-          }}>
-            Student Room Finder
-          </h1>
-          <p style={{
-            fontSize: "14px",
-            color: "var(--color-text-secondary)",
-            margin: "0",
-          }}>
-            Find your perfect accommodation
-          </p>
-        </div>
+    <main className="min-h-screen bg-slate-100 px-4 py-8 sm:px-6">
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl items-center justify-center">
+        <section className="grid w-full overflow-hidden rounded-3xl bg-white shadow-2xl shadow-slate-950/10 ring-1 ring-slate-200 lg:grid-cols-[1fr_0.95fr]">
+          <div className="hidden bg-slate-950 p-10 text-white lg:flex lg:flex-col lg:justify-between">
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="w-fit text-3xl font-extrabold"
+            >
+              Room<span className="text-indigo-300">Finder</span>
+            </button>
 
-        {!role ? (
-          /* Role Selection */
-          <div>
-            <p style={{
-              fontSize: "14px",
-              color: "var(--color-text-secondary)",
-              margin: "0 0 1.5rem",
-              textAlign: "center",
-              fontWeight: "500",
-            }}>
-              Select your role to continue
-            </p>
+            <div>
+              <p className="mb-4 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white/75">
+                Student room finder
+              </p>
+              <h1 className="max-w-md text-4xl font-bold leading-tight">
+                Sign in and manage rooms from one place.
+              </h1>
+              <p className="mt-4 max-w-md text-sm leading-6 text-white/65">
+                Students search rooms, employees verify listings, and admins manage the platform.
+              </p>
+            </div>
 
-            <div style={{ display: "grid", gap: "12px" }}>
-              {Object.entries(roleConfig).map(([roleKey, { name, emoji, color }]) => (
-                <button
-                  key={roleKey}
-                  onClick={() => setRole(roleKey)}
-                  style={{
-                    padding: "1rem",
-                    border: `1.5px solid ${color}`,
-                    background: "white",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontSize: "15px",
-                    fontWeight: "500",
-                    color: color,
-                    transition: "all 0.2s",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    justifyContent: "center",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "none";
-                  }}
-                >
-                  <span style={{ fontSize: "20px" }}>{emoji}</span>
-                  <span>{name}</span>
-                </button>
+            <div className="grid grid-cols-3 gap-3 text-center">
+              {["User", "Employee", "Admin"].map((item) => (
+                <div key={item} className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-sm font-bold">{item}</p>
+                  <p className="mt-1 text-xs text-white/55">Access</p>
+                </div>
               ))}
             </div>
           </div>
-        ) : (
-          /* Login Form */
-          <div>
-            <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-              <p style={{
-                fontSize: "16px",
-                fontWeight: "500",
-                color: "var(--color-text-primary)",
-                margin: "0 0 0.5rem",
-              }}>
-                Login as <span style={{ color: roleConfig[role].color, fontWeight: "600" }}>
-                  {roleConfig[role].name}
-                </span>
-              </p>
-              <p style={{
-                fontSize: "13px",
-                color: "var(--color-text-secondary)",
-                margin: "0",
-              }}>
-                Enter your credentials to access
-              </p>
-            </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <input
-                type="email"
-                placeholder="Email address"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                style={{
-                  padding: "12px 14px",
-                  border: "1px solid var(--color-border-tertiary)",
-                  borderRadius: "8px",
-                  fontSize: "14px",
-                  transition: "all 0.2s",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow = "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "var(--color-border-tertiary)";
-                  e.target.style.boxShadow = "none";
-                }}
-              />
-
-              <input
-                type="password"
-                placeholder="Password"
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                style={{
-                  padding: "12px 14px",
-                  border: "1px solid var(--color-border-tertiary)",
-                  borderRadius: "8px",
-                  fontSize: "14px",
-                  transition: "all 0.2s",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#667eea";
-                  e.target.style.boxShadow = "0 0 0 3px rgba(102, 126, 234, 0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "var(--color-border-tertiary)";
-                  e.target.style.boxShadow = "none";
-                }}
-              />
-
-              <button
-                onClick={handleLogin}
-                disabled={loading}
-                style={{
-                  padding: "12px",
-                  background: loading
-                    ? "#ccc"
-                    : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontSize: "15px",
-                  fontWeight: "500",
-                  cursor: loading ? "not-allowed" : "pointer",
-                  transition: "all 0.2s",
-                  marginTop: "0.5rem",
-                }}
-              >
-                {loading ? "Logging in..." : "Login"}
-              </button>
-            </div>
-
-            <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem", fontSize: "13px" }}>
-              {role === "USER" && (
+          <div className="p-6 sm:p-10">
+            <div className="mx-auto max-w-md">
+              <div className="mb-8 text-center">
                 <button
-                  onClick={() => navigate("/register")}
-                  style={{
-                    flex: "1",
-                    padding: "10px",
-                    background: "var(--color-background-secondary)",
-                    border: "0.5px solid var(--color-border-tertiary)",
-                    borderRadius: "8px",
-                    color: "var(--color-text-primary)",
-                    cursor: "pointer",
-                    fontWeight: "500",
-                    transition: "all 0.2s",
+                  type="button"
+                  onClick={() => navigate("/")}
+                  className="mb-5 text-3xl font-extrabold text-slate-950 lg:hidden"
+                >
+                  Room<span className="text-indigo-600">Finder</span>
+                </button>
+                <p className="text-sm font-bold uppercase tracking-wide text-indigo-600">
+                  Welcome back
+                </p>
+                <h2 className="mt-2 text-3xl font-bold text-slate-950">Login</h2>
+                <p className="mt-2 text-sm text-slate-500">
+                  Select your role and continue with your credentials.
+                </p>
+              </div>
+
+              {!role ? (
+                <div className="grid gap-3">
+                  {Object.entries(roleConfig).map(([roleKey, config]) => (
+                    <button
+                      key={roleKey}
+                      onClick={() => setRole(roleKey)}
+                      type="button"
+                      className={`flex items-center justify-between rounded-2xl border px-4 py-4 text-left font-semibold transition hover:-translate-y-0.5 hover:shadow-lg ${config.color}`}
+                    >
+                      <span className="flex items-center gap-3">
+                        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-base font-bold shadow-sm">
+                          {config.short}
+                        </span>
+                        <span>{config.name}</span>
+                      </span>
+                      <span className="text-sm">Continue</span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <form
+                  className="grid gap-4"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    handleLogin();
                   }}
                 >
-                  Create Account
-                </button>
+                  <div className={`rounded-2xl bg-gradient-to-r ${roleConfig[role].active} p-4 text-white shadow-lg`}>
+                    <p className="text-sm text-white/75">Login as</p>
+                    <p className="text-xl font-bold">{roleConfig[role].name}</p>
+                  </div>
+
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-semibold text-slate-700">
+                      Email address
+                    </span>
+                    <input
+                      type="email"
+                      placeholder="you@example.com"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-semibold text-slate-700">
+                      Password
+                    </span>
+                    <input
+                      type="password"
+                      placeholder="Enter password"
+                      value={form.password}
+                      onChange={(e) => setForm({ ...form, password: e.target.value })}
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                    />
+                  </label>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className={`rounded-2xl bg-gradient-to-r ${roleConfig[role].active} px-5 py-3.5 text-base font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0`}
+                  >
+                    {loading ? "Logging in..." : "Login"}
+                  </button>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {role === "USER" ? (
+                      <button
+                        type="button"
+                        onClick={() => navigate("/register")}
+                        className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                      >
+                        Create Account
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => setRole("")}
+                      className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                    >
+                      Back
+                    </button>
+                  </div>
+                </form>
               )}
-              <button
-                onClick={() => setRole("")}
-                style={{
-                  flex: "1",
-                  padding: "10px",
-                  background: "var(--color-background-secondary)",
-                  border: "0.5px solid var(--color-border-tertiary)",
-                  borderRadius: "8px",
-                  color: "var(--color-text-primary)",
-                  cursor: "pointer",
-                  fontWeight: "500",
-                  transition: "all 0.2s",
-                }}
-              >
-                Back
-              </button>
             </div>
           </div>
-        )}
+        </section>
       </div>
-    </div>
+    </main>
   );
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { clearSession, getSessionUser, isAuthenticated } from "../utils/session";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -85,19 +86,20 @@ function ArrowRightIcon({ className = "h-4 w-4" }) {
 function Navbar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const user = getSessionUser();
+  const loggedIn = isAuthenticated();
+  const displayName = user?.name || user?.email || "User";
 
   const goTo = (path) => {
     setOpen(false);
-    navigate(path);
+    navigate(path, path === "/search" ? { state: { resetAt: Date.now() } } : undefined);
   };
 
   const handleAuthAction = () => {
     setOpen(false);
 
-    if (token) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+    if (loggedIn) {
+      clearSession();
       navigate("/login");
       return;
     }
@@ -133,6 +135,15 @@ function Navbar() {
         </div>
 
         <div className="hidden items-center gap-4 lg:flex">
+          {loggedIn ? (
+            <div className="flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-white">
+                {displayName.charAt(0).toUpperCase()}
+              </span>
+              <span className="max-w-32 truncate">{displayName}</span>
+            </div>
+          ) : null}
+
           <button
             type="button"
             aria-label="Toggle dark mode"
@@ -146,7 +157,7 @@ function Navbar() {
             onClick={handleAuthAction}
             className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-3 text-lg font-semibold text-white shadow-lg shadow-indigo-600/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-600/35"
           >
-            {token ? "Logout" : "Login"}
+            {loggedIn ? "Logout" : "Login"}
             <ArrowRightIcon className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
         </div>
@@ -209,6 +220,15 @@ function Navbar() {
         </div>
 
         <div className="mt-auto flex flex-col gap-3">
+          {loggedIn ? (
+            <div className="flex items-center gap-3 rounded-2xl border border-indigo-100 bg-indigo-50 px-4 py-3 text-sm font-semibold text-indigo-700">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-white">
+                {displayName.charAt(0).toUpperCase()}
+              </span>
+              <span className="min-w-0 flex-1 truncate">{displayName}</span>
+            </div>
+          ) : null}
+
           <button
             type="button"
             aria-label="Toggle dark mode"
@@ -222,7 +242,7 @@ function Navbar() {
             onClick={handleAuthAction}
             className="group flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-slate-950 via-slate-800 to-indigo-900 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-900/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
           >
-            {token ? "Logout" : "Login"}
+            {loggedIn ? "Logout" : "Login"}
             <ArrowRightIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
         </div>

@@ -1,5 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
@@ -14,11 +14,13 @@ import SearchRoom from "./pages/SearchRoom.jsx";
 import AddRoom from "./pages/AddRoom.jsx";
 import Map from "./pages/Map.jsx";
 import Footer from "./components/footer.jsx";
+import { getToken } from "./utils/session";
 
 
 function AppContent() {
   const navigate = useNavigate();
 const location = useLocation();
+  const [hideFooterForSearchResults, setHideFooterForSearchResults] = useState(false);
   const hideNavbar = [
     "/login",
     "/register",
@@ -26,10 +28,23 @@ const location = useLocation();
     "/landlord-dashboard",
   ].includes(location.pathname);
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (token) {
       console.log("User already logged in ✅");
     }
+  }, []);
+
+  useEffect(() => {
+    setHideFooterForSearchResults(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const handleVisibility = (event) => {
+      setHideFooterForSearchResults(Boolean(event.detail?.visible));
+    };
+
+    window.addEventListener("search-results-visibility", handleVisibility);
+    return () => window.removeEventListener("search-results-visibility", handleVisibility);
   }, []);
 
   return (
@@ -72,7 +87,7 @@ const location = useLocation();
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
-      {!hideNavbar && <Footer />}
+      {!hideNavbar && !hideFooterForSearchResults && <Footer />}
     </>
   );
 }
